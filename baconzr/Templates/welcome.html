@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+        .entry {
+   		padding: 20px;
+   		margin: 10px;
+   		background: white;
+   		color: black;
+   		opacity: 0.5;
+   		font-size: 21px;
+   		font-weight: bold;
+   		line-height: 1.3em;
+   		border: 2px;
+   		border-radius: 10px;
+   		box-shadow: 0 0 0 4px white, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+   		font-weight: normal;
+   		border-bottom-left-radius: 3px 3px;
+		}
+</style>
+<html>
+  <head>
+    <title>Welcome, {{username}}!</title>
+  </head>
+
+  <body>
+  	<div class="entry"><h2>Welcome, {{username}}!</h2>
+    <br><br><br>
+    <a href = "/">Blog Home</a>
+    </div>
+  </body>
+</html>
+{% endblock %}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<style>
+	body {
+	background: url(http://www.salmonmedia.com/assets/images/website-background01.jpg) no-repeat center center fixed; 
+  	-webkit-background-size: cover;
+  	-moz-background-size: cover;
+  	-o-background-size: cover;
+  	background-size: cover;
+}
+ 
+	.top {
+		padding: 20px;
+   		margin: 10px;
+   		background: white;
+   		color: black;
+   		opacity: 0.98;
+   		font-size: 21px;
+   		font-weight: bold;
+   		line-height: 1.3em;
+   		border: 2px;
+   		border-radius: 10px;
+   		box-shadow: 0 0 0 4px white, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+   		font-weight: normal;
+   		border-bottom-left-radius: 3px 3px;
+	}
+	.login-area {
+	text-align: center;
+	}
+	.login-link {
+    color: gray;
+    text-decoration: none;
+	}
+
+	.login-link:visited {
+    color: gray;
+	}
+
+	.login-link:hover {
+    text-decoration: underline;
+	}
+	h1 {
+    display: block;
+    color: #222;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    text-decoration: none;
+}
+
+</style>
+<div class = "top">
+<head>
+  <link type="text/css" rel="stylesheet" href="/static/main.css" />
+
+  <title>Bacon ZR</title>
+</head>
+		
+		
+<body>
+    <h1>CHS BACON ZR</h1>
+	<div class="login-area">
+    {% if user %}
+      {{user.name}} (<a class="login-link" href="/logout">Logout</a>)
+      |
+      <a class="login-link" href="/">Home</a>
+      |
+      <a class="login-link" href="/newpost">New Post</a>
+      |
+      <a class="login-link" href="/code">Code</a>
+      |
+      <a class="login-link" href ='/code_history/'>Code History</a>
+    {% else %}
+      <a class="login-link" href="/login">Login</a>
+      |
+      <a class="login-link" href="/signup">Signup</a>
+    {% endif %}
+  </div>
+  <br>
+</div>
+  <hr>
+  <br>
+
+  <div id="content">
+  {% block content %}
+  {% endblock %}
+  </div>
+</body>
+
+</html>
+

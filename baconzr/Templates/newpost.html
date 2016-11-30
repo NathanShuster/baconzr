@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+ textarea {
+ 		position: center;
+        border:2px solid #000000;width: 400px; height: 200px; font-size: 17px; font-family: monospace;
+        }
+	input[type=text] {
+        border:2px solid #000000;width: 400px; font-size: 20px; padding: 2px;
+        }
+     	.texttitle {
+        color: white;
+        font-size: 40px;
+        }   
+        .textstuff {
+        color: white;
+        font-size: 20px;
+        }
+
+</style>
+  <div class="texttitle"><u>New Post</u></div>
+	<br><br>
+    <form method="post">
+      <label>
+        <div class="textstuff"><b>SUBJECT</b></div>
+        <input type="text" name="subject" value="{{subject}}">
+      </label>
+
+      <label>
+        <div class="textstuff"><b>CONTENT</b></div>
+        <textarea name="content">{{content}}</textarea>
+      </label>
+
+      <div class="textstuff">{{error}}</div>
+
+      <input type="submit">
+    </form>
+{% endblock %}

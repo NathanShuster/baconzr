@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% block content %}
+<html>
+  <head>
+    <title>Sign Up</title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+        .entry {
+   		padding: 20px;
+   		margin: 10px;
+   		background: white;
+   		color: black;
+   		opacity: 0.8;
+   		font-size: 21px;
+   		font-weight: bold;
+   		line-height: 1.3em;
+   		border: 2px;
+   		border-radius: 10px;
+   		box-shadow: 0 0 0 4px white, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+   		font-weight: normal;
+   		border-bottom-left-radius: 3px 3px;
+		}
+    </style>
+
+  </head>
+
+  <body>
+	<div class="entry">
+    <h2>Signup <a href="/login">(Or Login)</a></h2>
+    <form method="post">
+        <tr>
+          <td class="label">
+            Username
+          </td>
+          <td>
+            <input type="text" name="username" value="{{username}}"><br>
+          </td>
+          <td class="error">
+            {{error_username}}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Password
+          </td>
+          <td>
+            <input type="password" name="password" value=""><br>
+          </td>
+          <td class="error">
+            {{error_password}}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Verify Password
+          </td>
+          <td>
+            <input type="password" name="verify" value=""><br>
+          </td>
+          <td class="error">
+            {{error_verify}}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Email (optional)
+          </td>
+          <td>
+            <input type="text" name="email" value="{{email}}"><br>
+          </td>
+          <td class="error">
+            {{error_email}}
+          </td>
+        </tr>
+
+      <input type="submit">
+      </div>
+    </form>
+  </body>
+
+</html>
+{% endblock %}
