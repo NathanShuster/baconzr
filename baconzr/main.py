@@ -99,10 +99,10 @@ def users_key(group = 'default'):
 class User(db.Model): 
     name = db.StringProperty(required = True)
     pw_hash = db.StringProperty(required = True)
-    email = db.StringProperty()
+    email = db.StringProperty() #only optional parameter
 
     @classmethod
-    def by_id(cls, uid):
+    def by_id(cls, uid): #Search by ID
         return User.get_by_id(uid, parent = users_key())
 
     @classmethod
@@ -111,7 +111,7 @@ class User(db.Model):
         return u
 
     @classmethod
-    def register(cls, name, pw, email = None):
+    def register(cls, name, pw, email = None): #Create Account
         pw_hash = make_pw_hash(name, pw)
         return User(parent = users_key(),
                     name = name,
@@ -178,7 +178,7 @@ class Post(db.Model):
 		self._render_text = self.content.replace('\n', '<br>')
 		return render_str("post.html", p = self)
 
-	def as_dict(self):
+	def as_dict(self): #used for json rendering
 		time_fmt = '%c'
 		d = {'subject': self.subject,
              'content': self.content,
@@ -196,7 +196,7 @@ class Comment(db.Model):
 		self._render_text = self.content.replace('\n', '<br>')
 		return render_str("comment.html", p = self)
 	
-class BlogFront(BlogHandler):
+class BlogFront(BlogHandler): #Home page, with list of posts
     def get(self):
 		if not self.user:
 			self.redirect('/signup')
@@ -207,10 +207,11 @@ class BlogFront(BlogHandler):
 			return self.render_json([p.as_dict() for p in posts])
 
 def get_comments(post_id):
+	#Simple GQL query to get comments tied to a parent post
 	q = db.GqlQuery("SELECT * FROM Comment WHERE parent_post = :url ORDER BY created ASC", url = post_id)
 	return q
 	
-class PostPage(BlogHandler):
+class PostPage(BlogHandler): #View an existing post
 	def get(self, post_id):
 		if not self.user:
 			self.redirect('/signup')
@@ -247,7 +248,7 @@ class PostPage(BlogHandler):
 		
 		
 			
-class NewPost(BlogHandler):
+class NewPost(BlogHandler): #When you click to write a new post, takes you to this page
     def get(self):
         if self.user:
             self.render("newpost.html")
@@ -261,7 +262,7 @@ class NewPost(BlogHandler):
         subject = self.request.get('subject')
         content = self.request.get('content')
 
-        if subject and content:
+        if subject and content: #All required fields put out
 			p = Post(parent = blog_key(), subject = subject, content = content, submitter_id = self.user.name)
 			p.put()
 			time.sleep(0.5)
@@ -270,7 +271,7 @@ class NewPost(BlogHandler):
 			self.redirect('/')
         else:
             error = "subject and content, please!"
-            self.render("newpost.html", subject=subject, content=content, error=error)
+            self.render("newpost.html", subject=subject, content=content, error=error) #throw the same page back with an error message
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$") #regex to check for valid names
@@ -336,7 +337,7 @@ class Register(Signup):
             self.login(u)
             self.redirect('/welcome')
 
-class Login(BlogHandler):
+class Login(BlogHandler): #Login page
     def get(self):
         self.render('login-form.html')
 
@@ -357,14 +358,14 @@ class Logout(BlogHandler):
         self.logout()
         self.redirect('/signup')
 
-class Welcome(BlogHandler):
+class Welcome(BlogHandler): #signup page, where you go if not logged in
     def get(self):
         if self.user:
             self.render('welcome.html', username = self.user.name)
         else:
             self.redirect('/signup')
 
-class FlushHandler(BlogHandler):
+class FlushHandler(BlogHandler): #flush memcache, can be useful if buggy
 	def get(self):
 		memcache.flush_all()
 		self.redirect("/")
@@ -408,7 +409,7 @@ class EditPage(BlogHandler):
             self.render("edit.html", content=content, error=error)
 
 
-class WikiPage(BlogHandler):
+class WikiPage(BlogHandler): # Render a specific page of the code history
     def get(self, page_name="code"):
     	if not self.user:
 		self.redirect('/signup')
@@ -431,7 +432,7 @@ class WikiPage(BlogHandler):
             self.redirect('/login')
 
 
-class HistoryPage(BlogHandler):
+class HistoryPage(BlogHandler): 
     def get(self, page_name="code"):
     	if not self.user:
 			self.redirect('/signup')
@@ -440,15 +441,15 @@ class HistoryPage(BlogHandler):
         if pages:
             self.render('page_history.html', pages = pages)
         
-        if not pages and self.user:
+        if not pages and self.user: #If no history, prompt user to start
             self.redirect('/code_edit/')
         
-        if not pages and not self.user:
+        if not pages and not self.user: #Can't look at if not logged in
             self.redirect('/login')
 
 
 
-#Based on page, show handler
+#Overall handler
 app = webapp2.WSGIApplication([('/?(?:.json)?', BlogFront),
                                ('/([0-9]+)(?:.json)?', PostPage),
                                ('/newpost', NewPost),
