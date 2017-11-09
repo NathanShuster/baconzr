@@ -17,20 +17,20 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 
 
-template_dir = os.path.join(os.path.dirname(__file__), 'Templates')
+template_dir = os.path.join(os.path.dirname(__file__), 'Templates') #create dir to store jinja2 templates
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
-                               autoescape = True)
+                               autoescape = True) #autoescape for security
 
-secret = 'shhsupersecret'
+secret = 'shhsupersecret' #hash code
   
-def render_str(template, **params):
+def render_str(template, **params): #for jinja2
     t = jinja_env.get_template(template)
     return t.render(params)
 
 def make_secure_val(val):
     return '%s|%s' % (val, hmac.new(secret, val).hexdigest())
 
-def check_secure_val(secure_val):
+def check_secure_val(secure_val): #used to check password hash
     val = secure_val.split('|')[0]
     if secure_val == make_secure_val(val):
         return val
@@ -47,12 +47,12 @@ class BlogHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-    def render_json(self, d):
+    def render_json(self, d): #render pages in json
         json_txt = json.dumps(d)
         self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
         self.write(json_txt)
 
-    def set_secure_cookie(self, name, val):
+    def set_secure_cookie(self, name, val): #used for logging in
         cookie_val = make_secure_val(val)
         self.response.headers.add_header(
             'Set-Cookie',
@@ -96,7 +96,7 @@ def valid_pw(name, password, h):
 def users_key(group = 'default'):
     return db.Key.from_path('users', group)
 
-class User(db.Model):
+class User(db.Model): 
     name = db.StringProperty(required = True)
     pw_hash = db.StringProperty(required = True)
     email = db.StringProperty()
@@ -131,7 +131,7 @@ def age_set(key, val):
 	memcache.set(key, (val, save_time))
 	
 def age_get(key):
-	r = memcache.get(key)
+	r = memcache.get(key) #memcache
 	if r:
 		val, save_time = r
 		age = (datetime.utcnow() - save_time).total_seconds()
@@ -273,15 +273,15 @@ class NewPost(BlogHandler):
             self.render("newpost.html", subject=subject, content=content, error=error)
 
 
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$") #regex to check for valid names
 def valid_username(username):
     return username and USER_RE.match(username)
 
-PASS_RE = re.compile(r"^.{3,20}$")
+PASS_RE = re.compile(r"^.{3,20}$") #regex for valid pass
 def valid_password(password):
     return password and PASS_RE.match(password)
 
-EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
+EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$') #regex for valid email
 def valid_email(email):
     return not email or EMAIL_RE.match(email)
 
@@ -400,7 +400,7 @@ class EditPage(BlogHandler):
 		 
         if content:
             p = Page(parent = Page_key(), url = "code", content = content, note = note)
-            p.put()
+            p.put() #put that in the database
             time.sleep(0.5)
             self.redirect('/code')
         else:
@@ -411,13 +411,14 @@ class EditPage(BlogHandler):
 class WikiPage(BlogHandler):
     def get(self, page_name="code"):
     	if not self.user:
-			self.redirect('/signup')
+		self.redirect('/signup')
         ver = self.request.get("v")
         
         if ver:
             key = db.Key.from_path('Page', int(ver), parent=Page_key())
             page = db.get(key)
         else:
+	#GQL query to display top pages	
             page = db.GqlQuery("SELECT * FROM Page WHERE url = :url ORDER BY created DESC LIMIT 1", url = page_name).get()
         
         if page:
@@ -447,7 +448,7 @@ class HistoryPage(BlogHandler):
 
 
 
-
+#Based on page, show handler
 app = webapp2.WSGIApplication([('/?(?:.json)?', BlogFront),
                                ('/([0-9]+)(?:.json)?', PostPage),
                                ('/newpost', NewPost),
