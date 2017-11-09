@@ -35,7 +35,7 @@ def check_secure_val(secure_val): #used to check password hash
     if secure_val == make_secure_val(val):
         return val
 
-class BlogHandler(webapp2.RequestHandler):
+class BlogHandler(webapp2.RequestHandler): #Main handler, almost every page inherits from this
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
